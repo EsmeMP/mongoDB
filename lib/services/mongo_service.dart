@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:mongo5a/models/group_model.dart';
 import 'package:mongo_dart/mongo_dart.dart' as mongo;
@@ -17,9 +19,16 @@ class MongoService {
   }
 
   Future<void> connect() async {
-    _db = await mongo.Db.create(
-        'mongodb+srv://meme:Galletas.2580@cluster0.5ohmx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0');
-    await _db.open();
+    try {
+      _db = await mongo.Db.create(
+          'mongodb+srv://meme:Galletas.2580@cluster0.5ohmx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0');
+      await _db.open();
+      _db.databaseName = 'musica';
+      print('Conexion exitosa a MongoDB');
+    } on SocketException catch (e) {
+      print('Error de conexion: $e');
+      rethrow;
+    }
   }
 
   mongo.Db get db {
@@ -32,8 +41,12 @@ class MongoService {
 
   Future<List<GroupModel>> getGroups() async {
     final collection = db.collection('grupos');
+    print('Coleccion obtenida: $collection');
     var groups = await collection.find().toList();
     print('En MongoService: $groups');
+    if (groups.isEmpty) {
+      print('No se encontraron datos en la coleccion');
+    }
     return groups.map((grupo) => GroupModel.fromJson(grupo)).toList();
   }
 }
