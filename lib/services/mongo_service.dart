@@ -49,4 +49,20 @@ class MongoService {
     }
     return groups.map((grupo) => GroupModel.fromJson(grupo)).toList();
   }
+
+  Future<void> deleteGroup(mongo.ObjectId id) async {
+    final collection = _db.collection('grupos');
+    await collection.remove(mongo.where.eq('_id', id));
+  }
+
+  Future<void> updateGroup(GroupModel group) async {
+    final collection = _db.collection('grupos');
+    await collection.updateOne(
+      mongo.where.eq('_id', group.id),
+      mongo.modify
+          .set('name', group.name)
+          .set('type', group.type)
+          .set('albums', group.albums),
+    );
+  }
 }
