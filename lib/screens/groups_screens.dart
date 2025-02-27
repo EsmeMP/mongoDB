@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mongo5a/models/group_model.dart';
+import 'package:mongo5a/screens/insert_group_screen.dart';
 import 'package:mongo5a/services/mongo_service.dart';
 import 'package:mongo_dart/mongo_dart.dart' as mongo;
 
@@ -25,9 +26,52 @@ class _GroupsScreenState extends State<GroupsScreen> {
     _fetchGroups();
   }
 
+  @override
+  void dispose() {
+    // Destruir esta screen cuando la app salga de esta ventana
+    _nameController.dispose();
+    _typeController.dispose();
+    _albumsController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Grupos musicales'),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: GestureDetector(
+              onTap: () async {
+                await Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const InsertGroupScreen(),
+                  ),
+                );
+                _fetchGroups();
+              },
+              child: const Icon(
+                Icons.add,
+                size: 26.0,
+              ),
+            ),
+          )
+        ],
+      ),
+      body: ListView.builder(
+          itemCount: groups.length,
+          itemBuilder: (context, index) {
+            var group = groups[index];
+            return oneTile(group);
+          }),
+    );
+  }
+
   void _fetchGroups() async {
     groups = await MongoService().getGroups();
-    print('En fetch $groups');
+    print('En fetch: $groups');
     setState(() {});
   }
 
@@ -42,11 +86,11 @@ class _GroupsScreenState extends State<GroupsScreen> {
   }
 
   void _showEditDialog(GroupModel group) {
-    // recuperar la informacion del objeto GroupModel
+    // recuperar la información del objeto GroupModel
     _nameController.text = group.name;
     _typeController.text = group.type;
     _albumsController.text = group.albums.toString();
-    // crear un cuadro de dialogo para mostrar y editar la informacion
+    // crear un cuadro de diálogo para mostrar y editar
     showDialog(
       context: context,
       builder: (context) {
@@ -65,7 +109,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
               ),
               TextField(
                 controller: _albumsController,
-                decoration: const InputDecoration(labelText: 'Albums'),
+                decoration: const InputDecoration(labelText: 'Álbumes'),
               ),
             ],
           ),
@@ -76,11 +120,11 @@ class _GroupsScreenState extends State<GroupsScreen> {
             ),
             TextButton(
               onPressed: () {
-                //Recuperar nuevos valores
+                // Recuperar nuevos valores
                 group.name = _nameController.text;
                 group.type = _typeController.text;
                 group.albums = int.parse(_albumsController.text);
-                //Actualizar el grupo en Atlas
+                // Actualizar el grupo en Atlas
                 _updateGroup(group);
                 Navigator.pop(context);
               },
@@ -89,29 +133,6 @@ class _GroupsScreenState extends State<GroupsScreen> {
           ],
         );
       },
-    );
-  }
-
-  @override
-  void dispose() {
-    // destruir esta screen cuando la app se destruye
-    _nameController.dispose();
-    _typeController.dispose();
-    _albumsController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('CRUD Mongo de grupos de rock')),
-      body: ListView.builder(
-          itemCount: groups.length,
-          itemBuilder: (contexto, index) {
-            var group = groups[index];
-            return oneTile(group);
-            // oneTile(group);
-          }),
     );
   }
 
@@ -127,8 +148,9 @@ class _GroupsScreenState extends State<GroupsScreen> {
             icon: const Icon(Icons.edit),
           ),
           IconButton(
-              onPressed: () => _deleteGroup(group.id),
-              icon: const Icon(Icons.delete)),
+            onPressed: () => _deleteGroup(group.id),
+            icon: const Icon(Icons.delete),
+          ),
         ],
       ),
     );

@@ -65,4 +65,13 @@ class MongoService {
           .set('albums', group.albums),
     );
   }
+
+  Future<void> insertGroup(GroupModel group) async {
+    final collection = _db.collection('grupos');
+    await collection.insertOne(group.toJson());
+  }
+
+  Future<void> close() async {
+    await _db.close();
+  }
 }
