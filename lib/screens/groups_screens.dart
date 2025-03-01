@@ -138,7 +138,10 @@ class _GroupsScreenState extends State<GroupsScreen> {
 
   ListTile oneTile(GroupModel group) {
     return ListTile(
-      title: Text(group.name),
+      title: Text(
+        group.name,
+        style: Theme.of(context).textTheme.headlineMedium,
+      ),
       subtitle: Text(group.type),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,

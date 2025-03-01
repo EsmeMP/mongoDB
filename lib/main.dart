@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mongo5a/screens/groups_screens.dart';
 import 'package:mongo5a/services/mongo_service.dart';
+import 'package:mongo5a/widgets/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,9 +14,10 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: GroupsScreen(),
+      theme: tema1(),
+      home: const GroupsScreen(),
     );
   }
 }
