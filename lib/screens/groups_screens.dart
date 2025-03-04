@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mongo5a/models/group_model.dart';
 import 'package:mongo5a/screens/insert_group_screen.dart';
+import 'package:mongo5a/screens/songs_screen.dart';
 import 'package:mongo5a/services/mongo_service.dart';
 import 'package:mongo_dart/mongo_dart.dart' as mongo;
 
@@ -41,6 +42,16 @@ class _GroupsScreenState extends State<GroupsScreen> {
       appBar: AppBar(
         title: const Text('Grupos musicales'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.info),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const SongsScreen(),
+                ),
+              );
+            },
+          ),
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: GestureDetector(

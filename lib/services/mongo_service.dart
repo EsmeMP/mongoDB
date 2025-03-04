@@ -2,6 +2,7 @@ import 'dart:io';
 
 // import 'package:flutter/material.dart';
 import 'package:mongo5a/models/group_model.dart';
+import 'package:mongo5a/models/song_model.dart';
 import 'package:mongo_dart/mongo_dart.dart' as mongo;
 
 class MongoService {
@@ -69,6 +70,39 @@ class MongoService {
   Future<void> insertGroup(GroupModel group) async {
     final collection = _db.collection('grupos');
     await collection.insertOne(group.toJson());
+  }
+
+  // // Future<void> close() async {
+  // //   await _db.close();
+  // // }
+
+  Future<List<SongModel>> getSongs() async {
+    final collection = db.collection('canciones');
+    print('Coleccion obtenida: $collection');
+    var cancion = await collection.find().toList();
+    print('En MongoService: $cancion');
+    if (cancion.isEmpty) {
+      print('No se encontraron datos en la coleccion');
+    }
+    return cancion.map((song) => SongModel.fromJson(song)).toList();
+  }
+
+  Future<void> deleteSong(mongo.ObjectId id) async {
+    final collection = _db.collection('canciones');
+    await collection.deleteOne(mongo.where.eq('_id', id));
+  }
+
+  Future<void> updateSong(SongModel song) async {
+    final collection = _db.collection('canciones');
+    await collection.updateOne(
+      mongo.where.eq('_id', song.id),
+      mongo.modify.set('name', song.name),
+    );
+  }
+
+  Future<void> insertSong(SongModel song) async {
+    final collection = _db.collection('canciones');
+    await collection.insertOne(song.toJson());
   }
 
   Future<void> close() async {
